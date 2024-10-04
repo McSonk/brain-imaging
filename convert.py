@@ -1,4 +1,6 @@
-
+'''Module to convert ALL DICOM files to NIfTI format using dcm2niix.
+It will find all the directories in the sourcedata directory and convert all the
+DICOM files in the 'ima' subdirectory to NIfTI format.'''
 import os
 import tkinter as tk
 from pathlib import Path
