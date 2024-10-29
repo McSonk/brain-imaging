@@ -3,6 +3,17 @@ function motionCorrection(specifiedPath, spmFile)
     % Function to list all directories and their first-level subdirectories on a specified path
 
     spmData = load(spmFile);
+    spm_jobman('initcfg');
+
+    % Check if the specified TPM file exists
+    tpmFile = spmData.matlabbatch{1, 5}.spm.spatial.preproc.tissue(1).tpm{1};
+    if ~isfile(tpmFile)
+        templates = getTemplates();
+        warning('The specified template file does not exist: %s.\n Using %s', tpmFile, templates{1});
+        for i = 1:6
+            spmData.matlabbatch{1, 5}.spm.spatial.preproc.tissue(i).tpm{1} = templates{i};
+        end
+    end
 
     % Get the list of all directories in the specified path
     mainDirs = dir(specifiedPath);
@@ -17,7 +28,7 @@ function motionCorrection(specifiedPath, spmFile)
         subDirs = dir(fullfile(specifiedPath, mainDirs(i).name));
         subDirs = subDirs(~[subDirs.isdir]); % Filter only files
         
-        fprintf('  Subdirectories:\n');
+        fprintf('  Files:\n');
         % Filter subdirectories containing 'T1' and ending with '.nii'
         t1 = filterByType(subDirs, 'T1');
         fprintf('    T1: %s\n', fullfile(specifiedPath, mainDirs(i).name, t1.name));
@@ -40,9 +51,19 @@ function motionCorrection(specifiedPath, spmFile)
         spmData.matlabbatch{1, 3}.spm.spatial.coreg.estimate.source = {fullfile(t2.folder, t2.name)};
         spmData.matlabbatch{1, 4}.spm.spatial.coreg.estimate.source = {fullfile(t1.folder, t1.name)};
 
-        display(spmData.matlabbatch{1, 4}.spm.spatial.coreg.estimate.source)
-        
-        break;
+        fprintf('Going to run the batch\n');
+        spm_jobman('run', spmData.matlabbatch)
+        fprintf('Done\n');
+    end
+end
+
+function templates = getTemplates()
+    templates = cell(6);
+    spmPath = fileparts(which('spm'));
+    tpmFileReal = fullfile(spmPath, 'tpm', 'TPM.nii');
+
+    for i = 1:6
+        templates{i} = strcat(tpmFileReal, sprintf(',%d', i));
     end
 end
 
