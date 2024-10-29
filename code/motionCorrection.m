@@ -24,7 +24,15 @@ function motionCorrection(specifiedPath)
         fprintf('    t2: %s\n', fullfile(specifiedPath, mainDirs(i).name, t2.name));
 
         rep_1 = filterByType(subDirs, 'REP');
-        fprintf('    REP: %s\n', fullfile(specifiedPath, mainDirs(i).name, rep_1.name));
+        fprintf('    REP1: %s\n', fullfile(specifiedPath, mainDirs(i).name, rep_1.name));
+
+        % Extract the first number from rep_1.name
+        rep_2_number = regexp(rep_1.name, 'REP\d+', 'match', 'once');
+        rep_2_number = rep_2_number(end);
+        rep_2_number = str2double(rep_2_number) + 1;
+
+        rep_2 = filterByType(subDirs, sprintf('REP%d', rep_2_number));
+        fprintf('    REP2: %s\n', fullfile(specifiedPath, mainDirs(i).name, rep_2.name));
     end
 end
 
