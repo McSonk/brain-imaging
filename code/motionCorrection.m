@@ -1,6 +1,8 @@
-function motionCorrection(specifiedPath)
+function motionCorrection(specifiedPath, spmFile)
     % listDirectoriesAndSubdirectories
     % Function to list all directories and their first-level subdirectories on a specified path
+
+    spmData = load(spmFile);
 
     % Get the list of all directories in the specified path
     mainDirs = dir(specifiedPath);
@@ -33,6 +35,14 @@ function motionCorrection(specifiedPath)
 
         rep_2 = filterByType(subDirs, sprintf('REP%d', rep_2_number));
         fprintf('    REP2: %s\n', fullfile(specifiedPath, mainDirs(i).name, rep_2.name));
+
+        spmData.matlabbatch{1, 1}.spm.spatial.realign.estwrite.data = headMotionData(rep_1, rep_2);
+        spmData.matlabbatch{1, 3}.spm.spatial.coreg.estimate.source = {fullfile(t2.folder, t2.name)};
+        spmData.matlabbatch{1, 4}.spm.spatial.coreg.estimate.source = {fullfile(t1.folder, t1.name)};
+
+        display(spmData.matlabbatch{1, 4}.spm.spatial.coreg.estimate.source)
+        
+        break;
     end
 end
 
@@ -42,4 +52,21 @@ function target = filterByType(files, type)
     if ~isempty(target)
         target = target(1);
     end
+end
+
+function repFiles = headMotionData(rep1, rep2)
+    % Load the first and second repetitions
+    % Access individual elements of the 150x1 cell array
+    
+    aux1 = cell(150, 1);
+    aux2 = cell(150, 1);
+    repFiles = cell(1, 2);
+
+    for i = 1:150
+        aux1{i, 1} = strcat(fullfile(rep1.folder, rep1.name), sprintf(',%d', i));
+        aux2{i, 1} = strcat(fullfile(rep2.folder, rep2.name), sprintf(',%d', i));
+    end
+
+    repFiles{1} = aux1;
+    repFiles{2} = aux2;
 end
