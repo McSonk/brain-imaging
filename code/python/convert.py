@@ -5,9 +5,9 @@ import os
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog
+import sys
 
-
-if __name__ == '__main__':
+def get_paths():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
 
@@ -18,13 +18,42 @@ if __name__ == '__main__':
 
     download_dir = filedialog.askdirectory(title="Where is the downloaded data?")
     raw_dir = Path(download_dir).parent / 'rawdata'
-    print(f"Selected directory: {download_dir}")
-    print(f'rawdata location: {raw_dir}')
 
     print('Thank you! Now, please tell me the MRIcroGL directory')
     input('(Hit "enter" to continue)')
-    mricrogl_dir = filedialog.askdirectory(title="Where is the MRIcroGL directory?")
+
+    return download_dir, raw_dir
+
+def get_microgl_dir():
+    print('Please, hit "enter" to select the MRIcroGL directory')
+    input()
+
+    return filedialog.askdirectory(title="Where is the MRIcroGL directory?")
+
+if __name__ == '__main__':
+
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '--help':
+            print("Usage: python convert.py [sourcedata_directory] [mricrogl_directory]")
+            sys.exit(0)
+        download_dir = sys.argv[1]
+        raw_dir = Path(download_dir).parent / 'rawdata'
+    else:
+        download_dir, raw_dir = get_paths()
+
+    print(f"Selected directory: {download_dir}")
+    print(f'rawdata location: {raw_dir}')
+
+
+    if len(sys.argv) > 2:
+        mricrogl_dir = sys.argv[2]
+    else:
+        mricrogl_dir = get_microgl_dir()
+
     dcm_path = Path(mricrogl_dir) / Path('Resources') / Path('dcm2niix')
+
+
 
 
     directories = [d for d in Path(download_dir).iterdir() if d.is_dir()]
