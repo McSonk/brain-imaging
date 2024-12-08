@@ -10,12 +10,30 @@ Execute `convert.py [sourcedata_directory] [mricrogl_directory]`. It takes aroun
 
 With matlab execute `motionCorrection y01_individual_prepro_desktop.mat`. It'll do the following:
 
-* Realign
-* Slice timing
-* Coregister t2 to REP1
+* Realign -- Corrects for head motion by realigning all the images in the time series to a reference image.
+* Slice timing -- Corrects for differences in acquisition time between slices.
+* Coregister t2 to REP1 -- Aligns the T2-weighted image to the reference image (REP1) from the same subject.
 * Coregister T2 to t2 (from previous step)
-* Segmentation
+* Segmentation -- Separates the different tissue types within the MRI images (e.g., gray matter, white matter, cerebrospinal fluid).
 
-Then, within SPM, execute the batch `dartel_create_template_desk.mat`. This is a manual step.
+#### Dartel template creation
+
+Then, **within SPM**, execute the batch `dartel_create_template_desk.mat`. This is a manual step.
+
+> The DARTEL (Diffeomorphic Anatomical Registration Through Exponentiated Lie Algebra) template is a tool used in neuroimaging for more accurate inter-subject registration of brain images. As a result, this will create Template_1.nii, Template_2.nii, ..., Template_6.nii files
+
+#### Normalise to MNI Space
 
 Finally, execute `applyTemplate o01_norm_to_mni.mat`. This will create `swa` files
+
+> Normalization to MNI space is a crucial step in MRI preprocessing that ensures that brain images from different subjects are aligned to a common template. MNI refers to the Montreal Neurological Institute, which provides a standardized brain template widely used in neuroimaging.
+
+### 1st level analysis
+
+The fMRI model specification function in SPM is used to define the experimental design and specify the statistical model for analysing functional MRI (fMRI) data
+
+This step is crucial for setting up the General Linear Model (GLM) that will be used to estimate the effects of different experimental conditions or regressors on the fMRI data
+
+#### Model Specification
+
+
