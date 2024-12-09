@@ -36,4 +36,17 @@ This step is crucial for setting up the General Linear Model (GLM) that will be 
 
 #### Model Specification
 
+Execute the following function: `first_lvl_spec('/home/sonk/Devel/master/brain-imaging/data/rawdata', '/home/sonk/Devel/master/brain-imaging/code/first_level_specification.mat')`
 
+This code will execute SPM for all subjects. SPM will:
+
+1. Design matrix definition -- Specify the conditions or events (e.g., different tasks or stimuli) that will be included in the model. Also define the function (HRF) and time parameters (TR, etc)
+2. Prepare data -- Load the preprocessed fMRI data, ensuring it has undergone necessary steps like realignment, slice-timing correction, and normalization
+3. Specify model -- Construct a design matrix that includes columns for each condition or regressor, convolved with the basis functions to model the expected BOLD response.
+
+
+#### Model Estimation
+
+Run `first_lvl_estim('/home/sonk/Devel/master/brain-imaging/data/rawdata', '/home/sonk/Devel/master/brain-imaging/code/first_level_model_estimation.mat')`
+
+#### Model contrast
